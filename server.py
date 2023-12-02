@@ -5,7 +5,7 @@ import json
 app = Flask(__name__)
 
 global model
-print('ファイル読み込み中のため、接続しないでください。')
+print('ファイル読み込み中のため、クライアントを接続しないでください。')
 model = gensim.models.KeyedVectors.load_word2vec_format('model_nouns_only.vec', binary=False)
 print('読み込み完了')
 
@@ -18,8 +18,6 @@ def similar():
     try:
         similar_words = model.most_similar(positive=[word])
         words_text = similar_words[0][0] + " " + word
-        # response_data = {'similar_words': word_lst}
-        # response_json = json.dumps(response_data, ensure_ascii=False)
         return Response(words_text, content_type="text/plain; charset=utf-8")
 
     except KeyError:
