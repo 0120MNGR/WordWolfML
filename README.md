@@ -9,6 +9,6 @@ $ pip install -r requirements.txt
 $ python ./server.py
 
 # javaのClientのサンプルコード
-$ javac cli.java
-$ java cli
+$ javac client.java
+$ java client
 ```
