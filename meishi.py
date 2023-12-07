@@ -39,7 +39,7 @@ from tqdm import tqdm
 mecab = MeCab.Tagger()
 
 # 元の.vecファイルを開く
-with open('model.vec', 'r', encoding='utf-8') as file:
+with open('model_neologd.vec', 'r', encoding='utf-8') as file:
     # ヘッダー行を読み込む
     header = file.readline()
     # ファイルの残りの部分を読み込む
@@ -66,7 +66,7 @@ for line in tqdm(lines):
 num_words = len(new_lines)
 
 # 新しい.vecファイルにデータを保存
-with open('model_nouns_only.vec', 'w', encoding='utf-8') as file:
+with open('model_neo_nouns_only.vec', 'w', encoding='utf-8') as file:
     # 更新されたヘッダー行を書き込む
     file.write(f"{num_words} {header.split(' ')[1]}")
     for line in new_lines:
