@@ -4,10 +4,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-public class cli {
+public class client {
     public static void main(String[] args) {
         String word = "日本人";
-        String url = "http://localhost:5000/similar?word=" + word;
+        // String url = "http://localhost:5000/similar?word=" + word;
+        String url = "http://localhost:5000/get_random";
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
