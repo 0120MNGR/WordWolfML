@@ -2,3 +2,5 @@ model.vec
 model_neologd.vec
 model_nouns_only.vec
 model_nouns_only.bin
+model_neo_nouns_only.vec
+model_neo_nouns_only.bin
