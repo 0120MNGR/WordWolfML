@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 public class client {
     public static void main(String[] args) {
-        String word = "日本人";
+        // String word = "日本人";
         // String url = "http://localhost:5000/similar?word=" + word;
         String url = "http://localhost:5000/get_random";
 
