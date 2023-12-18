@@ -7,10 +7,7 @@ app = Flask(__name__)
 
 # モデルの読み込み
 global model
-model = gensim.models.KeyedVectors.load_word2vec_format('bin/model_nouns_only.bin', binary=True)
-
-# 頻度ランキングのDataFrameを読み込む
-df = pd.read_pickle("bin/frec_jawiki-latest-pages-articles.pkl")
+model = gensim.models.KeyedVectors.load_word2vec_format('bin/wordwolf_model.bin', binary=True)
 
 @app.route('/similar', methods=['GET'])
 def similar():
@@ -28,26 +25,18 @@ def similar():
 
 @app.route('/get_random', methods=['GET'])
 def get_random():
-    
-    # 単語の出現頻度数の閾値を指定
-    FREQUENCY_THRESHOLD = 20000
-    df_higher_rank = df[df["Frequency"] >= FREQUENCY_THRESHOLD]
-    
-    while True:
-        # random_word = random.choice(list(model.key_to_index.keys()))
-        random_word = df_higher_rank["Word"].sample(n=1).iloc[0]
-        if random_word in model and len(random_word) >= 3:
-            break
+    # ランダムに言葉を選ぶ
+    random_word = random.choice(list(model.key_to_index.keys()))
     
     # コサイン類似度の値を指定
     SIMILARITY = 0.45
-    similar_words_lst = model.similar_by_key(random_word, topn=1000)
+    similar_words_lst = model.similar_by_key(random_word)
         
     min_difference = float('inf')
     nearest_word = None
     for word, similarity in similar_words_lst:
         difference = abs(similarity - SIMILARITY)
-        if difference < min_difference and word in df_higher_rank["Word"].values:
+        if difference < min_difference:
             min_difference = difference
             nearest_word = word
 
