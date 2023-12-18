@@ -1,7 +1,6 @@
 from flask import Flask, Response, request
 import gensim
 import random
-import pandas as pd
 
 app = Flask(__name__)
 
