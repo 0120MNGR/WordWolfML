@@ -1,13 +1,16 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, Response, request
 import gensim
 import random
+import pandas as pd
 
 app = Flask(__name__)
 
+# モデルの読み込み
 global model
-print('ファイル読み込み中のため、クライアントを接続しないでください。')
-model = gensim.models.KeyedVectors.load_word2vec_format('model_nouns_only.bin', binary=True)
-print('読み込み完了')
+model = gensim.models.KeyedVectors.load_word2vec_format('bin/model_nouns_only.bin', binary=True)
+
+# 頻度ランキングのDataFrameを読み込む
+df = pd.read_pickle("bin/frec_jawiki-latest-pages-articles.pkl")
 
 @app.route('/similar', methods=['GET'])
 def similar():
@@ -23,20 +26,36 @@ def similar():
     except KeyError:
         return Response('Error: Word not in vocabulary', status=404, content_type="text/plain; charset=utf-8")
 
-    
 @app.route('/get_random', methods=['GET'])
 def get_random():
-    # モデルの語彙からランダムに単語を選択
-    print(len(list(model.key_to_index.keys())))
-    random_word = random.choice(list(model.key_to_index.keys()))
+    
+    # 単語の出現頻度数の閾値を指定
+    FREQUENCY_THRESHOLD = 20000
+    df_higher_rank = df[df["Frequency"] >= FREQUENCY_THRESHOLD]
+    
+    while True:
+        # random_word = random.choice(list(model.key_to_index.keys()))
+        random_word = df_higher_rank["Word"].sample(n=1).iloc[0]
+        if random_word in model and len(random_word) >= 3:
+            break
+    
+    # コサイン類似度の値を指定
+    SIMILARITY = 0.45
+    similar_words_lst = model.similar_by_key(random_word, topn=1000)
+        
+    min_difference = float('inf')
+    nearest_word = None
+    for word, similarity in similar_words_lst:
+        difference = abs(similarity - SIMILARITY)
+        if difference < min_difference and word in df_higher_rank["Word"].values:
+            min_difference = difference
+            nearest_word = word
 
-    # 選択した単語に類似した単語を見つける
-    similar_word = model.most_similar(positive=[random_word])[0][0]
-
-    # 結果を文字列にして返す
-    words_text = random_word + " " + similar_word
+    print(model.similarity(random_word, nearest_word))
+    # # 結果を文字列にして返す
+    words_text = random_word + " " + nearest_word
     return Response(words_text, content_type="text/plain; charset=utf-8")
-
+    
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
