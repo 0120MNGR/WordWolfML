@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # モデルの読み込み
 global model
-model = gensim.models.KeyedVectors.load_word2vec_format('bin/wordwolf_model.bin', binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('wordwolf_model.bin', binary=True)
 
 @app.route('/similar', methods=['GET'])
 def similar():
@@ -41,7 +41,7 @@ def get_random():
             nearest_word = word
 
     print(model.similarity(random_word, nearest_word))
-    # # 結果を文字列にして返す
+    # 結果を文字列にして返す
     words_text = random_word + " " + nearest_word
     return Response(words_text, content_type="text/plain; charset=utf-8")
     
